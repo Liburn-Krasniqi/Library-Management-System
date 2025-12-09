@@ -1,5 +1,5 @@
 services:
-  postgres:
+  library:
     image: postgres:13
     ports:
       - 5434:5432
