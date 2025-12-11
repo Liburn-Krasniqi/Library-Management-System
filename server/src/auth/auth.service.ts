@@ -1,10 +1,12 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { AuthDto } from './dto';
 import * as argon from 'argon2';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
+
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { SignupDto } from './dto/signup.dto';
+import { SigninDto } from './dto/signin.dto';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 
 @Injectable()
 export class AuthService {
@@ -13,23 +15,26 @@ export class AuthService {
     private jwt: JwtService,
     private config: ConfigService,
   ) {}
-  async signup(dto: AuthDto) {
+
+  async signup(dto: SignupDto) {
     try {
-      // generate the password
       const hash = await argon.hash(dto.password);
-      // save the user to db
+
       const user = await this.prisma.user.create({
         data: {
           email: dto.email,
           password: hash,
+          name: dto.name,
         },
         select: {
           id: true,
           email: true,
+          name: true,
+          role: true,
+          createdAt: true,
         },
       });
 
-      //return saved user
       return user;
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
@@ -41,24 +46,16 @@ export class AuthService {
     }
   }
 
-  async login(dto: AuthDto) {
-    // find user by email
+  async login(dto: SigninDto) {
     const user = await this.prisma.user.findUnique({
-      where: {
-        email: dto.email,
-      },
+      where: { email: dto.email },
     });
 
-    // if not exist throw exception
     if (!user) throw new ForbiddenException('Credentials incorrect');
 
-    // compare pw
     const pwMatches = await argon.verify(user.password, dto.password);
-
-    // if pw incorrect throw exception
     if (!pwMatches) throw new ForbiddenException('Credentials incorrect');
 
-    // send back to user
     return this.signToken(user.id, user.email);
   }
 
@@ -66,16 +63,13 @@ export class AuthService {
     userId: string,
     email: string,
   ): Promise<{ access_token: string }> {
-    const payload = {
-      sub: userId,
-      email,
-    };
+    const payload = { sub: userId, email };
 
     const secret = this.config.get<string>('ACCESS_TOKEN_SECRET');
 
     const token = await this.jwt.signAsync(payload, {
       expiresIn: '15m',
-      secret: secret,
+      secret,
     });
 
     return { access_token: token };

@@ -44,15 +44,15 @@ export const AuthProvider = ({ children }: ProviderProps) => {
       });
 
       const jsonData = await response.json();
-      console.log(jsonData);
-      if (jsonData?.accessToken) {
+
+      if (jsonData?.access_token) {
         const newUser = { name: jsonData.name };
 
         setUser(newUser);
-        setToken(jsonData.accessToken);
+        setToken(jsonData.access_token);
 
         localStorage.setItem("user", JSON.stringify(newUser));
-        localStorage.setItem("token", jsonData.accessToken);
+        localStorage.setItem("token", jsonData.access_token);
 
         navigate("/");
         return;
