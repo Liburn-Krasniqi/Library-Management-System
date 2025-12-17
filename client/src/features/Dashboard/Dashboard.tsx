@@ -5,6 +5,7 @@ import type { User } from "./types";
 import { userFormat } from "./types";
 import { Modal, Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { AIQueryAgent } from "../AIQueryAgent";
 
 const USERS_URL = "http://localhost:3333/users";
 const token = localStorage.getItem("token");
@@ -70,6 +71,7 @@ export function Dashboard() {
 
   return (
     <div>
+      <AIQueryAgent></AIQueryAgent>
       <h1>Admin Dashboard</h1>
       <UsersTable
         isLoading={isLoading}

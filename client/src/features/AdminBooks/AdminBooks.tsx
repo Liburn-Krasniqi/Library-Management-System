@@ -162,10 +162,7 @@ export function AdminBooks() {
       </Modal>
 
       <div className="d-flex align-items-center mb-3">
-        <Button
-          variant="secondary"
-          onClick={() => navigate("/admin/dashboard")}
-        >
+        <Button variant="secondary" onClick={() => navigate("/admin/users")}>
           ← Back
         </Button>
       </div>

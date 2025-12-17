@@ -1,0 +1,20 @@
+import { UseGuards, Controller, Post, Body } from '@nestjs/common';
+import { JwtGuard } from 'src/auth/guard';
+import { AiService } from './ai.service';
+
+@UseGuards(JwtGuard)
+@Controller('ai')
+export class AiController {
+  constructor(private readonly aiService: AiService) {}
+
+  @Post('query')
+  async query(@Body('question') question: string) {
+    const queryResults = await this.aiService.handleQuery(question);
+    const answer = await this.aiService.translate(question, queryResults);
+
+    return {
+      answer,
+      data: queryResults,
+    };
+  }
+}
