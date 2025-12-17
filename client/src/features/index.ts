@@ -4,3 +4,4 @@ export * from "./Landing";
 export * from "./Books";
 export * from "./Dashboard";
 export * from "./AdminBooks";
+export * from "./AIQueryAgent";
