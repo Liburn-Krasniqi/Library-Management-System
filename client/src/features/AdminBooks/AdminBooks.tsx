@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { BooksTable } from "../Books/BooksTable";
 import { useSearchParams } from "react-router-dom";
 import type { Book } from "../Books/Types";
-import { Modal, Form, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { ArrowLeft, X } from "lucide-react";
 
 const BOOKS_URL = "http://localhost:3333/books";
 
@@ -11,15 +11,13 @@ export function AdminBooks() {
   const [books, setBooks] = useState<Book[]>([]);
   const [isLoading, setLoading] = useState(true);
   const [searchParams] = useSearchParams();
-  const userId = searchParams.get("userId"); // injected from AdminUsers dashboard
+  const userId = searchParams.get("userId");
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
-  // For editing
   const [showModal, setShowModal] = useState(false);
   const [editingBook, setEditingBook] = useState<Book | null>(null);
 
-  // Fetch books
   const fetchBooks = () => {
     if (!userId) return;
     setLoading(true);
@@ -37,7 +35,6 @@ export function AdminBooks() {
     fetchBooks();
   }, [userId]);
 
-  // Delete a book
   const handleDelete = (id: string) => {
     if (!confirm("Are you sure you want to delete this book?")) return;
 
@@ -49,7 +46,6 @@ export function AdminBooks() {
     }).then(() => fetchBooks());
   };
 
-  // Edit a book (open modal)
   const handleEdit = (book: Book) => {
     setEditingBook(book);
     setShowModal(true);
@@ -79,92 +75,358 @@ export function AdminBooks() {
   };
 
   return (
-    <div>
-      {/* <h1>User's Books</h1> */}
+    <div
+      style={{
+        minHeight: "50vh",
+        padding: "20px",
+      }}
+    >
+      <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
+        <BooksTable
+          books={books}
+          isLoading={isLoading}
+          onCreate={() => {
+            throw new Error("Function not implemented.");
+          }}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
 
-      <BooksTable
-        books={books}
-        isLoading={isLoading}
-        onCreate={() => {
-          throw new Error("Function not implemented.");
-        }}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
+        {showModal && editingBook && (
+          <>
+            <div
+              style={{
+                position: "fixed",
+                inset: 0,
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                zIndex: 40,
+                animation: "fadeIn 0.2s ease-out",
+              }}
+              onClick={() => setShowModal(false)}
+            />
+            <style>{`
+              @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+              }
+              @keyframes slideIn {
+                from { opacity: 0; transform: translate(-50%, -48%) scale(0.95); }
+                to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+              }
+            `}</style>
 
-      {/* Edit Book Modal */}
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Edit Book</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {editingBook && (
-            <Form onSubmit={handleSubmit}>
-              <Form.Group className="mb-3">
-                <Form.Label>Title</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={editingBook.title}
-                  onChange={(e) =>
-                    setEditingBook({ ...editingBook, title: e.target.value })
+            <div
+              style={{
+                position: "fixed",
+                left: "50%",
+                top: "50%",
+                transform: "translate(-50%, -50%)",
+                backgroundColor: "white",
+                borderRadius: "12px",
+                boxShadow:
+                  "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+                width: "90%",
+                maxWidth: "500px",
+                zIndex: 50,
+                animation: "slideIn 0.2s ease-out",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "20px 24px",
+                  borderBottom: "1px solid #e5e7eb",
+                }}
+              >
+                <h2
+                  style={{
+                    margin: 0,
+                    fontSize: "20px",
+                    fontWeight: "600",
+                    color: "#111827",
+                  }}
+                >
+                  Edit Book
+                </h2>
+                <button
+                  onClick={() => setShowModal(false)}
+                  style={{
+                    padding: "8px",
+                    backgroundColor: "transparent",
+                    border: "none",
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                    color: "#6b7280",
+                    display: "flex",
+                    alignItems: "center",
+                    transition: "background-color 0.2s",
+                  }}
+                  onMouseOver={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#f3f4f6")
                   }
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>Author</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={editingBook.author}
-                  onChange={(e) =>
-                    setEditingBook({ ...editingBook, author: e.target.value })
-                  }
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>Genre</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={editingBook.genre ?? ""}
-                  onChange={(e) =>
-                    setEditingBook({ ...editingBook, genre: e.target.value })
-                  }
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>Reading Status</Form.Label>
-                <Form.Select
-                  value={editingBook.readingStatus}
-                  onChange={(e) =>
-                    setEditingBook({
-                      ...editingBook,
-                      readingStatus: e.target.value as Book["readingStatus"],
-                    })
+                  onMouseOut={(e) =>
+                    (e.currentTarget.style.backgroundColor = "transparent")
                   }
                 >
-                  <option value="READING">READING</option>
-                  <option value="COMPLETED">COMPLETED</option>
-                  <option value="PLAN_TO_READ">PLAN_TO_READ</option>
-                </Form.Select>
-              </Form.Group>
+                  <X size={20} />
+                </button>
+              </div>
 
-              <Button variant="secondary" onClick={() => setShowModal(false)}>
-                Close
-              </Button>
-              <Button variant="primary" type="submit" className="ms-2">
-                Save Changes
-              </Button>
-            </Form>
-          )}
-        </Modal.Body>
-      </Modal>
+              <div style={{ padding: "24px" }}>
+                <div style={{ marginBottom: "20px" }}>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: "14px",
+                      fontWeight: "500",
+                      color: "#374151",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    Title
+                  </label>
+                  <input
+                    type="text"
+                    value={editingBook.title}
+                    onChange={(e) =>
+                      setEditingBook({ ...editingBook, title: e.target.value })
+                    }
+                    style={{
+                      width: "100%",
+                      padding: "10px 12px",
+                      fontSize: "14px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "6px",
+                      outline: "none",
+                      transition: "border-color 0.2s, box-shadow 0.2s",
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = "#3b82f6";
+                      e.target.style.boxShadow =
+                        "0 0 0 3px rgba(59, 130, 246, 0.1)";
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = "#d1d5db";
+                      e.target.style.boxShadow = "none";
+                    }}
+                  />
+                </div>
 
-      <div className="d-flex align-items-center mb-3">
-        <Button variant="secondary" onClick={() => navigate("/admin/users")}>
-          ← Back
-        </Button>
+                <div style={{ marginBottom: "20px" }}>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: "14px",
+                      fontWeight: "500",
+                      color: "#374151",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    Author
+                  </label>
+                  <input
+                    type="text"
+                    value={editingBook.author}
+                    onChange={(e) =>
+                      setEditingBook({ ...editingBook, author: e.target.value })
+                    }
+                    style={{
+                      width: "100%",
+                      padding: "10px 12px",
+                      fontSize: "14px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "6px",
+                      outline: "none",
+                      transition: "border-color 0.2s, box-shadow 0.2s",
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = "#3b82f6";
+                      e.target.style.boxShadow =
+                        "0 0 0 3px rgba(59, 130, 246, 0.1)";
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = "#d1d5db";
+                      e.target.style.boxShadow = "none";
+                    }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: "20px" }}>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: "14px",
+                      fontWeight: "500",
+                      color: "#374151",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    Genre
+                  </label>
+                  <input
+                    type="text"
+                    value={editingBook.genre ?? ""}
+                    onChange={(e) =>
+                      setEditingBook({ ...editingBook, genre: e.target.value })
+                    }
+                    style={{
+                      width: "100%",
+                      padding: "10px 12px",
+                      fontSize: "14px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "6px",
+                      outline: "none",
+                      transition: "border-color 0.2s, box-shadow 0.2s",
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = "#3b82f6";
+                      e.target.style.boxShadow =
+                        "0 0 0 3px rgba(59, 130, 246, 0.1)";
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = "#d1d5db";
+                      e.target.style.boxShadow = "none";
+                    }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: "24px" }}>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: "14px",
+                      fontWeight: "500",
+                      color: "#374151",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    Reading Status
+                  </label>
+                  <select
+                    value={editingBook.readingStatus}
+                    onChange={(e) =>
+                      setEditingBook({
+                        ...editingBook,
+                        readingStatus: e.target.value as Book["readingStatus"],
+                      })
+                    }
+                    style={{
+                      width: "100%",
+                      padding: "10px 12px",
+                      fontSize: "14px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "6px",
+                      outline: "none",
+                      backgroundColor: "white",
+                      cursor: "pointer",
+                      transition: "border-color 0.2s, box-shadow 0.2s",
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = "#3b82f6";
+                      e.target.style.boxShadow =
+                        "0 0 0 3px rgba(59, 130, 246, 0.1)";
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = "#d1d5db";
+                      e.target.style.boxShadow = "none";
+                    }}
+                  >
+                    <option value="READING">READING</option>
+                    <option value="COMPLETED">COMPLETED</option>
+                    <option value="PLAN_TO_READ">PLAN_TO_READ</option>
+                  </select>
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "12px",
+                    justifyContent: "flex-end",
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setShowModal(false)}
+                    style={{
+                      padding: "10px 20px",
+                      fontSize: "14px",
+                      fontWeight: "500",
+                      color: "#374151",
+                      backgroundColor: "white",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "6px",
+                      cursor: "pointer",
+                      transition: "background-color 0.2s",
+                    }}
+                    onMouseOver={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#f9fafb")
+                    }
+                    onMouseOut={(e) =>
+                      (e.currentTarget.style.backgroundColor = "white")
+                    }
+                  >
+                    Close
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSubmit}
+                    style={{
+                      padding: "10px 20px",
+                      fontSize: "14px",
+                      fontWeight: "500",
+                      color: "white",
+                      backgroundColor: "#3b82f6",
+                      border: "none",
+                      borderRadius: "6px",
+                      cursor: "pointer",
+                      transition: "background-color 0.2s",
+                    }}
+                    onMouseOver={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#2563eb")
+                    }
+                    onMouseOut={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#3b82f6")
+                    }
+                  >
+                    Save Changes
+                  </button>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+      <div style={{ marginBottom: "24px" }}>
+        <button
+          onClick={() => navigate("/admin/users")}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            padding: "10px 20px",
+            fontSize: "14px",
+            fontWeight: "500",
+            color: "#374151",
+            backgroundColor: "white",
+            border: "1px solid #d1d5db",
+            borderRadius: "8px",
+            cursor: "pointer",
+            transition: "background-color 0.2s, border-color 0.2s",
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.backgroundColor = "#f9fafb";
+            e.currentTarget.style.borderColor = "#9ca3af";
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.backgroundColor = "white";
+            e.currentTarget.style.borderColor = "#d1d5db";
+          }}
+        >
+          <ArrowLeft size={18} />
+          Back
+        </button>
       </div>
     </div>
   );
