@@ -1,7 +1,14 @@
 import { Route, Routes } from "react-router";
 
 import { Layout } from "../../components";
-import { Books, Landing, Login, Register } from "../../features";
+import {
+  AdminBooks,
+  Books,
+  Dashboard,
+  Landing,
+  Login,
+  Register,
+} from "../../features";
 import PrivateRoute from "./PrivateRoute";
 import PublicRoute from "./PublicRoute";
 
@@ -18,6 +25,8 @@ export function AppRoutes() {
         {/* Protected pages: only accessible if logged in */}
         <Route element={<PrivateRoute />}>
           <Route path="books" element={<Books />} />
+          <Route path="admin/users" element={<Dashboard />} />
+          <Route path="admin/books" element={<AdminBooks />} />
         </Route>
 
         <Route index element={<Landing />} />

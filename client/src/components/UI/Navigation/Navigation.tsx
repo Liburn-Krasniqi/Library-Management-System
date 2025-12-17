@@ -13,6 +13,7 @@ import classes from "./Navigation.module.css";
 export function Navigation() {
   const auth = useAuth();
   const username = auth.user?.name;
+  const role = auth.user?.role;
 
   // Extract initials like: John Doe → JD
   const initials =
@@ -55,6 +56,16 @@ export function Navigation() {
               <Nav.Link className="color-2" as={Link} to="/">
                 Home
               </Nav.Link>
+              {role === "USER" && (
+                <Nav.Link className="color-2" as={Link} to="/books">
+                  My Books
+                </Nav.Link>
+              )}
+              {role === "ADMIN" && (
+                <Nav.Link className="color-2" as={Link} to="/admin/users">
+                  Dashboard
+                </Nav.Link>
+              )}
 
               {/* Show Sign Up when NOT logged in */}
               {!username && (

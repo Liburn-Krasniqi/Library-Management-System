@@ -41,11 +41,46 @@ export class BookService {
     });
   }
 
+  async updateAsAdmin(userId: string, bookId: string, dto: UpdateBookDto) {
+    const book = await this.prisma.book.findFirst({
+      where: {
+        id: bookId,
+        userId,
+      },
+    });
+
+    if (!book) {
+      throw new NotFoundException('Book not found for this user');
+    }
+
+    return this.prisma.book.update({
+      where: { id: bookId },
+      data: dto,
+    });
+  }
+
   async remove(userId: string, id: string) {
     await this.findOne(userId, id);
 
     return this.prisma.book.delete({
       where: { id },
+    });
+  }
+
+  async removeAsAdmin(userId: string, bookId: string) {
+    const book = await this.prisma.book.findFirst({
+      where: {
+        id: bookId,
+        userId,
+      },
+    });
+
+    if (!book) {
+      throw new NotFoundException('Book not found for this user');
+    }
+
+    return this.prisma.book.delete({
+      where: { id: bookId },
     });
   }
 }
