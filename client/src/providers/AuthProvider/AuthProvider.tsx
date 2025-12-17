@@ -7,8 +7,14 @@ interface LoginData {
   password: string;
 }
 
+// enum ROLE {
+//   'USER',
+//   'ADMIN',
+// }
+
 interface User {
   name: string;
+  role: string;
 }
 
 interface AuthContextType {
@@ -46,7 +52,7 @@ export const AuthProvider = ({ children }: ProviderProps) => {
       const jsonData = await response.json();
 
       if (jsonData?.access_token) {
-        const newUser = { name: jsonData.name };
+        const newUser = { name: jsonData.name, role: jsonData.role };
 
         setUser(newUser);
         setToken(jsonData.access_token);
