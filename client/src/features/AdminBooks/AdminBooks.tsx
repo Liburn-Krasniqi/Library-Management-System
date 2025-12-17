@@ -3,6 +3,7 @@ import { BooksTable } from "../Books/BooksTable";
 import { useSearchParams } from "react-router-dom";
 import type { Book } from "../Books/Types";
 import { Modal, Form, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 const BOOKS_URL = "http://localhost:3333/books";
 
@@ -12,6 +13,7 @@ export function AdminBooks() {
   const [searchParams] = useSearchParams();
   const userId = searchParams.get("userId"); // injected from AdminUsers dashboard
   const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
   // For editing
   const [showModal, setShowModal] = useState(false);
@@ -158,6 +160,15 @@ export function AdminBooks() {
           )}
         </Modal.Body>
       </Modal>
+
+      <div className="d-flex align-items-center mb-3">
+        <Button
+          variant="secondary"
+          onClick={() => navigate("/admin/dashboard")}
+        >
+          ← Back
+        </Button>
+      </div>
     </div>
   );
 }
