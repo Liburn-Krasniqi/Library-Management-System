@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Table, Button, Form } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 
 export function AIQueryAgent() {
   const [question, setQuestion] = useState("");
@@ -27,6 +27,7 @@ export function AIQueryAgent() {
 
   return (
     <div>
+      <h2>AI Query Agent</h2>
       {/* Input */}
       <Form className="mb-3">
         <Form.Control
@@ -40,29 +41,11 @@ export function AIQueryAgent() {
         </Button>
       </Form>
 
-      {/* Results */}
-      {Array.isArray(result) && (
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th>User</th>
-              <th>Books</th>
-            </tr>
-          </thead>
-          <tbody>
-            {result.map((row: any) => (
-              <tr key={row.id}>
-                <td>{row.email}</td>
-                <td>{row._count?.books ?? "-"}</td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      )}
-
-      {/* Non-table response */}
-      {!Array.isArray(result) && result && (
-        <pre>{JSON.stringify(result, null, 2)}</pre>
+      {result && (
+        <div className="mt-4">
+          <h5>Answer</h5>
+          <p>{result.answer}</p>
+        </div>
       )}
     </div>
   );

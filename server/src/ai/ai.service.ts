@@ -45,6 +45,38 @@ export class AiService {
     });
   }
 
+  async translate(question: string, query: any) {
+    const response = await fetch(
+      'https://openrouter.ai/api/v1/chat/completions',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer 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`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'xiaomi/mimo-v2-flash:free',
+          messages: [
+            {
+              role: 'user',
+              content: `User asked this question (in natural language): ${question}
+And we queried the database which returned this: ${JSON.stringify(query)}.
+
+Please use the question and the query results to create a short summary/response to their inquiry.`,
+            },
+          ],
+        }),
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error(`OpenRouter error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.choices[0].message.content;
+  }
+
   //   async topExpensiveBooks(limit = 5) {
   //     return this.prisma.book.findMany({
   //       orderBy: { price: 'desc' },

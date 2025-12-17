@@ -9,6 +9,12 @@ export class AiController {
 
   @Post('query')
   async query(@Body('question') question: string) {
-    return this.aiService.handleQuery(question);
+    const queryResults = await this.aiService.handleQuery(question);
+    const answer = await this.aiService.translate(question, queryResults);
+
+    return {
+      answer,
+      data: queryResults,
+    };
   }
 }
