@@ -51,22 +51,26 @@ model Book {
   price Decimal? @db.Decimal(10, 2)
   userId        String
   user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookId        Int?
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
+  displayBook   DisplayBook? @relation(fields: [bookId], references: [id])
   
   @@index([userId])
   @@map("books")
 }
 
-//   model DisplayBook {
-//   id            String       @id @default(cuid())
-
-//   title         String
-//   author        String
-//   genre         String?
-//   coverImage    String?
-//   description   String? 
-//   releaseYear   DateTime?
-
-//   @@map("displayBooks")
-// }
+model DisplayBook {
+  id            Int      @id @default(autoincrement())
+  title         String
+  author        String
+  description   String?
+  genres        String?
+  avgRating     Float?
+  coverImage    String?
+  datasetIndex  Int?     @unique  // Maps to the index in your CSV/FAISS index
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  books     Book[]
+}
