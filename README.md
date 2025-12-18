@@ -39,12 +39,22 @@ then finaly:
 npm run start:dev
 ```
 
-### 🧠 ML setup:
+### 🧠 ML & AI setup:
 Seperate window again
 ```
 cd ML 
 python3 python_recommendation_api.py
 ```
+Also you have to get an OpenRouter key here:
+[Free Key](https://openrouter.ai/settings/keys)
+
+and place it on `.env` like:
+
+```
+OpenRouterKey='key'
+```
+
+
 
 ---
 ### Core:
