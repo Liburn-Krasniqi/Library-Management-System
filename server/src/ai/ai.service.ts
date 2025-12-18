@@ -1,10 +1,14 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { parseQuestion } from './parsers/rule.parser';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AiService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private config: ConfigService,
+  ) {}
 
   async handleQuery(question: string) {
     const intent = parseQuestion(question);
@@ -51,7 +55,7 @@ export class AiService {
       {
         method: 'POST',
         headers: {
-          Authorization: `Bearer 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`,
+          Authorization: `Bearer ${this.config.get<string>('OpenRouterKey')}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
