@@ -1,6 +1,6 @@
 // Landing.tsx - Direct Python API integration
 import { Link } from "react-router-dom";
-import { BookOpen, Users, TrendingUp, Sparkles, Heart } from "lucide-react";
+import { BookOpen, TrendingUp, Sparkles, Heart } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface DisplayBook {
