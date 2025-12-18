@@ -46,6 +46,9 @@ model Book {
   author        String
   genre         String?
   readingStatus ReadingStatus @default(READING)
+  description   String? 
+  releaseYear   DateTime?
+  price Decimal? @db.Decimal(10, 2)
   userId        String
   user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt     DateTime     @default(now())
@@ -54,3 +57,16 @@ model Book {
   @@index([userId])
   @@map("books")
 }
+
+//   model DisplayBook {
+//   id            String       @id @default(cuid())
+
+//   title         String
+//   author        String
+//   genre         String?
+//   coverImage    String?
+//   description   String? 
+//   releaseYear   DateTime?
+
+//   @@map("displayBooks")
+// }

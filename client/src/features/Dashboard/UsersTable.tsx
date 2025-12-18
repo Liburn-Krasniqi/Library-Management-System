@@ -17,41 +17,18 @@ interface UsersTableProps {
 }
 
 export function UsersTable({
-  isLoading,
   users,
   onEdit,
   onDelete,
   onViewBooks,
 }: UsersTableProps) {
-  if (isLoading) {
+  if (!users || !Array.isArray(users)) {
     return (
-      <div
-        style={{
-          padding: "40px",
-          textAlign: "center",
-        }}
-      >
-        <div
-          style={{
-            display: "inline-block",
-            width: "32px",
-            height: "32px",
-            border: "4px solid #e5e7eb",
-            borderTopColor: "#3b82f6",
-            borderRadius: "50%",
-            animation: "spin 1s linear infinite",
-          }}
-        />
-        <p style={{ marginTop: "16px", color: "#6b7280" }}>Loading...</p>
-        <style>{`
-          @keyframes spin {
-            to { transform: rotate(360deg); }
-          }
-        `}</style>
+      <div style={{ padding: "40px", textAlign: "center" }}>
+        <p style={{ color: "#6b7280" }}>No users found</p>
       </div>
     );
   }
-
   return (
     <div>
       <div
