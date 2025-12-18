@@ -1,6 +1,51 @@
 # Library-Management-System
 Web application where users can manage their personal library. Users can add, edit, or delete books, organize them by genre, and track their reading status. An admin user will have the authority to manage all books and users.
 
+## ☑️ Setup:
+Get repo:
+```
+git clone https://github.com/Liburn-Krasniqi/Library-Management-System.git
+```
+
+### 💻 Setup Client:
+In a terminal window run:
+```
+cd client
+npm i
+npm run dev
+```
+
+### ⚙️ Setup backend:
+create a `.env` file inside `server/` by running this inside server:
+```
+cat <<EOF > .env
+PYTHON_API_URL=http://localhost:5001
+DATABASE_URL=postgresql://postgres:1234@localhost:5434/nest?schema=public
+ACCESS_TOKEN_SECRET=950e9172afab670445756343eb5bafc027b04679d45bcbb561324701723b910d78cd49224d5e8fdcf564fc31079774bf992f85d57681f4dc9e5acc46144a7ab6
+EOF
+```
+
+Now in a seperate terminal window run:
+```
+cd server
+npm i
+docker compose up library -d
+npx prisma migrate dev
+npx prisma generate
+```
+
+then finaly:
+```
+npm run start:dev
+```
+
+### 🧠 ML setup:
+Seperate window again
+```
+cd ML 
+python3 python_recommendation_api.py
+```
+
 ---
 ### Core:
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
