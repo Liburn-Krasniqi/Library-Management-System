@@ -34,6 +34,20 @@ export function Landing({ user }: LandingProps) {
     fetchRecommendations();
   }, [user]);
 
+  useEffect(() => {
+    fetchRecommendations();
+
+    // DEBUG: Check what we're sending to Python API
+    fetchUserReadingHistory().then((bookIds) => {
+      console.log("User's book IDs:", bookIds);
+      if (bookIds.length === 0) {
+        console.log("⚠️ No book IDs - showing popular books instead");
+      } else {
+        console.log("✅ Personalized recommendations based on:", bookIds);
+      }
+    });
+  }, [user]);
+
   const fetchRecommendations = async () => {
     setLoading(true);
     try {
