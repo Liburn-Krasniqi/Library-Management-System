@@ -5,26 +5,55 @@ import { userFormat } from "./types";
 import { useNavigate } from "react-router-dom";
 import { AIQueryAgent } from "../AIQueryAgent";
 import { X } from "lucide-react";
+import { useAuth } from "../../providers";
 
 const USERS_URL = "http://localhost:3333/users";
-const token = localStorage.getItem("token");
 
 export function Dashboard() {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingUser, setEditingUser] = useState<User>(userFormat);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const auth = useAuth(); // Get auth from context
 
   const fetchUsers = () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setError("No authentication token found");
+      setLoading(false);
+      navigate("/login");
+      return;
+    }
+
     setLoading(true);
+    setError(null);
+
     fetch(`${USERS_URL}/all`, {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          if (res.status === 401) {
+            throw new Error("Unauthorized - please log in again");
+          }
+          throw new Error(`Failed to fetch users: ${res.status}`);
+        }
+        return res.json();
+      })
       .then((data) => {
-        setUsers(data);
+        setUsers(Array.isArray(data) ? data : []);
         setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching users:", err);
+        setError(err.message);
+        setLoading(false);
+        if (err.message.includes("Unauthorized")) {
+          navigate("/login");
+        }
       });
   };
 
@@ -39,10 +68,20 @@ export function Dashboard() {
 
   const handleDelete = (id: string) => {
     if (!confirm("Are you sure you want to delete this user?")) return;
+    const token = localStorage.getItem("token");
+
     fetch(`${USERS_URL}/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
-    }).then(() => fetchUsers());
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to delete user");
+        return fetchUsers();
+      })
+      .catch((err) => {
+        console.error("Error deleting user:", err);
+        alert("Failed to delete user");
+      });
   };
 
   const handleViewBooks = (userId: string) => {
@@ -51,6 +90,7 @@ export function Dashboard() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const token = localStorage.getItem("token");
     const method = editingUser.id ? "PATCH" : "POST";
     const url = editingUser.id ? `${USERS_URL}/${editingUser.id}` : USERS_URL;
 
@@ -61,12 +101,53 @@ export function Dashboard() {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(editingUser),
-    }).then(() => {
-      setShowModal(false);
-      setEditingUser(userFormat);
-      fetchUsers();
-    });
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to save user");
+        setShowModal(false);
+        setEditingUser(userFormat);
+        return fetchUsers();
+      })
+      .catch((err) => {
+        console.error("Error saving user:", err);
+        alert("Failed to save user");
+      });
   };
+
+  if (error) {
+    return (
+      <div style={{ minHeight: "100vh", padding: "20px" }}>
+        <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
+          <div
+            style={{
+              padding: "20px",
+              backgroundColor: "#fee",
+              border: "1px solid #fcc",
+              borderRadius: "8px",
+              color: "#c33",
+            }}
+          >
+            <h2>Error Loading Dashboard</h2>
+            <p>{error}</p>
+            <button
+              onClick={fetchUsers}
+              style={{
+                marginTop: "10px",
+                padding: "10px 20px",
+                backgroundColor: "#3b82f6",
+                color: "white",
+                border: "none",
+                borderRadius: "6px",
+                cursor: "pointer",
+              }}
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ minHeight: "100vh" }}>
@@ -93,7 +174,7 @@ export function Dashboard() {
         </div>
       </div>
 
-      {/* Modal */}
+      {/* Modal - rest of your modal code stays the same */}
       {showModal && (
         <>
           {/* Backdrop */}

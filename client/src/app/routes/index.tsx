@@ -11,8 +11,10 @@ import {
 } from "../../features";
 import PrivateRoute from "./PrivateRoute";
 import PublicRoute from "./PublicRoute";
+import { useAuth } from "../../providers";
 
 export function AppRoutes() {
+  const { user } = useAuth();
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
@@ -29,7 +31,7 @@ export function AppRoutes() {
           <Route path="admin/books" element={<AdminBooks />} />
         </Route>
 
-        <Route index element={<Landing />} />
+        <Route index element={<Landing user={user || null} />} />
       </Route>
     </Routes>
   );

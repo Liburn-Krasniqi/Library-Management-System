@@ -1,4 +1,3 @@
-// prisma.service.ts - Updated with ConfigService
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaPg } from '@prisma/adapter-pg';
