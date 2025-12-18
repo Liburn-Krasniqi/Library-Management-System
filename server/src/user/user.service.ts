@@ -37,6 +37,7 @@ export class UserService {
       orderBy: { createdAt: 'desc' },
     });
   }
+
   async getUserByEmail(email: string) {
     return this.prisma.user.findUnique({
       where: { email },
