@@ -1,0 +1,230 @@
+.register-container {
+  min-height: 60vh;
+  padding: 2rem 1rem;
+}
+
+.register-card {
+  max-width: 550px;
+  width: 100%;
+  padding: 3rem 2.5rem;
+  border-radius: 16px;
+  background: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.register-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, #b45253 0%, #fcb53b 100%);
+}
+
+.register-icon-wrapper {
+  display: inline-block;
+  padding: 1rem;
+  background: linear-gradient(
+    135deg,
+    rgba(180, 82, 83, 0.1),
+    rgba(252, 181, 59, 0.1)
+  );
+  border-radius: 50%;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(5deg);
+  }
+}
+
+.form-group-custom {
+  position: relative;
+}
+
+.form-group-custom label {
+  color: #333;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.form-control-custom {
+  padding: 0.75rem 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.form-control-custom:focus {
+  border-color: #b45253;
+  box-shadow: 0 0 0 0.2rem rgba(180, 82, 83, 0.25);
+  outline: none;
+}
+
+.form-control-custom::placeholder {
+  color: #aaa;
+}
+
+.benefits-box {
+  background: linear-gradient(
+    135deg,
+    rgba(252, 181, 59, 0.08),
+    rgba(180, 82, 83, 0.08)
+  );
+  border-left: 4px solid #fcb53b;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+}
+
+.benefits-box p {
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.benefits-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.benefits-list li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.benefits-list li:last-child {
+  margin-bottom: 0;
+}
+
+.register-button {
+  font-size: 1.1rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(180, 82, 83, 0.3);
+}
+
+.register-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(180, 82, 83, 0.4);
+}
+
+.register-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.register-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.login-link {
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.login-link::after {
+  content: "→";
+  margin-left: 4px;
+  opacity: 0;
+  transform: translateX(-5px);
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.login-link:hover::after {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.login-link:hover {
+  color: #b45253 !important;
+}
+
+.divider {
+  position: relative;
+  text-align: center;
+}
+
+.divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
+}
+
+.divider-text {
+  position: relative;
+  background: white;
+  padding: 0 1rem;
+  color: #999;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.alert {
+  border-radius: 8px;
+  border-left: 4px solid #dc3545;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .register-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .register-icon-wrapper {
+    padding: 0.75rem;
+  }
+
+  .register-icon-wrapper svg {
+    width: 36px;
+    height: 36px;
+  }
+
+  .register-card h1 {
+    font-size: 1.75rem;
+  }
+
+  .register-button {
+    font-size: 1rem;
+    padding: 0.75rem;
+  }
+
+  .benefits-box {
+    padding: 0.875rem 1rem;
+  }
+
+  .benefits-list li {
+    font-size: 0.85rem;
+  }
+}
